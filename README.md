@@ -8,9 +8,9 @@ vector spaces involved.  It was written by Sean Bowman and Itamar
 Gal at the University of Texas, Austin between 2010-2012.
 
 The ideas in smush are roughly based on the paper [The Tidy Set: A Minimal Simplicial Set for
-Computing Homology of Clique Complexes](http://www.cs.dartmouth.edu/~afra/papers/manuscript/tidy.pdf) by A. Zomorodian.  We extend his ideas to the computation of barcodes for filtered complexes.
-We extend his techniques to computing the persistent homology of 
-filtred complexes.  There are other differences, too.
+Computing Homology of Clique Complexes](http://www.cs.dartmouth.edu/~afra/papers/manuscript/tidy.pdf) 
+by A. Zomorodian.  We extend his techniques to the computation of 
+barcodes for filtered complexes.  There are other differences, too.
 
 ## Building and so forth
 
