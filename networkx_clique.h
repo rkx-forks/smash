@@ -1,6 +1,12 @@
 #ifndef NETWORKX_CLIQUE_H
 #define NETWORKX_CLIQUE_H
 
+/*
+find cliques using algorithms which
+are directly translated from networkx Python
+library, https://networkx.github.io/
+*/
+
 #include "clique_factory.h"
 #include <boost/numeric/conversion/cast.hpp>
 #include <stack>
