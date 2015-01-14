@@ -1,13 +1,13 @@
-# Smush
+# Smash
 
-Smush is a program for computeing the 
+Smash is a program for computeing the 
 [persistent homology](http://en.wikipedia.org/wiki/Persistent_homology) 
 of a point cloud.  It attempts to gain a performance boost by
 collapsing simplices in order to reduce the dimensions of the 
 vector spaces involved.  It was written by Sean Bowman and Itamar 
 Gal at the University of Texas, Austin between 2010-2012.
 
-The ideas in smush are roughly based on the paper [The Tidy Set: A Minimal Simplicial Set for
+The ideas in smash are roughly based on the paper [The Tidy Set: A Minimal Simplicial Set for
 Computing Homology of Clique Complexes](http://www.cs.dartmouth.edu/~afra/papers/manuscript/tidy.pdf) 
 by A. Zomorodian.  We extend his techniques to the computation of 
 barcodes for filtered complexes.  There are other differences, too.
@@ -18,13 +18,13 @@ First of all, this software is highly expermental, might not work
 for you, is unnecessarily verbose, probably contains horrible bugs,
 etc., etc.
 
-Smush uses DJB's redo system for building.  There is a
+Smash uses DJB's redo system for building.  There is a
 [nice Python implementation](https://github.com/apenwarr/redo) by 
 Avery Pennarun.  (Really worth checking out, redo is super cool.)
 You'll need to edit the .do files to point to the directories where
 your Boost (and possibly other) libraries live.
 
-Smush also uses Boost and the C++ standard library extensively,
+Smash also uses Boost and the C++ standard library extensively,
 including c++11 features, so you'll need a moderately recent
 compiler to get things to work.
 
