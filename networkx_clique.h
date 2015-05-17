@@ -75,7 +75,7 @@ void networkx_cliques(Graph& g, Visitor& visitor) {
                  inserter(smallcand, smallcand.begin()));
   VertexSet done;
 
-  typedef stack< list<VertexSet> > VertexSetStack;
+// typedef stack< list<VertexSet> > VertexSetStack;
   vector<VertexSet> cand_stack;
   vector<VertexSet> done_stack;
   vector<VertexSet> smallcand_stack;

@@ -78,12 +78,12 @@ template <typename Graph, typename Collection,
 
 template <typename DS>
 class SimplicialVrVisitor {
-  map<int, vector<Simplex>> sx_map;
-  DS& degenerate;
-  int max_dim;
+    std::unordered_map<int, vector<Simplex>> sx_map;
+    DS& degenerate;
+    int max_dim;
 public:
-  SimplicialVrVisitor(DS& ds) 
-    : degenerate(ds) {}
+    SimplicialVrVisitor(DS& ds) 
+        : degenerate(ds) {}
 
   void visit(Simplex& s, distance_t weight) {
     if (s.dimension() > 0 &&
@@ -115,8 +115,8 @@ make_simplicial_vr_visitor(DS& degenerate) {
 }
 
 class TestingVrVisitor {
-  map<int, vector<Simplex> > sx_map;
-  map<Simplex, distance_t> weight_map;
+    std::unordered_map<int, vector<Simplex> > sx_map;
+    std::unordered_map<Simplex, distance_t, SimplexHasher> weight_map;
   int max_dim;
   vector<Simplex> visited_order;
 public:

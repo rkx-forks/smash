@@ -121,7 +121,7 @@ protected:
   SimplicialSetPtr ss;
   Iterator out;
 
-  map<Vertex, int> collapsed_nbrs_map;
+  std::unordered_map<Vertex, int> collapsed_nbrs_map;
   Vertex last_vertex;
 public:
   DfsCollapseVisitor(SimplicialSetPtr ss, Iterator out) : ss(ss), out(out) {

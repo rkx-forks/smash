@@ -125,6 +125,20 @@ size_t hash_value(Simplex const& p);
 void print_simplices(const vector<Simplex>& sxs);
 Simplex make_simplex(vector<int> verts);
 
+struct SimplexHasher {
+    std::size_t operator()(const Simplex& s) const {
+        using std::size_t;
+        using std::hash;
+        using std::string;
+
+        size_t hash_val = 0;
+        for (auto i = s.begin(); i != s.end(); ++i) {
+            hash_val ^= hash<Simplex::vertex_t>()(*i);
+        }
+        return hash_val;
+    }
+};
+
 //////////////////////////////////////////////
 //
 class SimplexList {

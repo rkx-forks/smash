@@ -37,7 +37,7 @@ public:
 
 
 protected:
-  typedef map<Simplex, vertex_t> vertex_map_t;
+  typedef std::unordered_map<Simplex, vertex_t, SimplexHasher> vertex_map_t;
 
   clique_graph_t g;
   vertex_map_t vertex_map;

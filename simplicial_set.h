@@ -2,15 +2,17 @@
 #define SIMPLICIAL_SET_H
 
 #include <iostream>
+#include <unordered_map>
 #include "boost/shared_ptr.hpp"
 #include "boost/cast.hpp"
 
 #include "incremental_vr2.h"
 #include "chain.hpp"
+#include "simplex.h"
 
 #include <ctime>
 
-using namespace boost;
+//using namespace boost;
 using namespace std;
 
 template <typename K, typename V>
@@ -24,7 +26,7 @@ class DegenerateSimplices {
  protected:
   SimplexList simplices;
 
-  map<Simplex::vertex_t, Simplex::vertex_t> vertex_map;
+  std::unordered_map<Simplex::vertex_t, Simplex::vertex_t> vertex_map;
   vector<Simplex> vertex_identifications;
 
   /* slower!
@@ -69,7 +71,7 @@ public:
   DegenerateSimplices() {}
 
   template <typename Iterator>
-    DegenerateSimplices(Iterator start, Iterator end) 
+    DegenerateSimplices(Iterator start, Iterator end)
       : simplices(start, end), vertex_identifications() {
     for_each(start, end,
              [&](const Simplex &sx) { recompute_identifications(sx); });
@@ -188,8 +190,7 @@ public:
 
     int betti_current = 0,
       betti_previous = 0;
-    map<Simplex, Chain> pivots;
-
+    std::unordered_map<Simplex, Chain, SimplexHasher> pivots;
     for (int d = 0; d < s.dimension() + 1; ++d) {
       vector<Simplex> subsimplices; // nondegenerate subsimplices of s
       nondegenerate_subsimplices_of(d, s, back_inserter(subsimplices));
@@ -322,11 +323,12 @@ public:
   }
 
   void compute_homology(int max_dim) {
-    map<Simplex, Chain> image_pivots;
-    map<Simplex, Chain> kernel_pivots;
-    map<Simplex, Chain> cokernel_pivots;
-    vector<int> betti(max_dim + 1);
-    vector< map<Simplex, Chain> > homology_pivots(max_dim + 1);
+      std::unordered_map<Simplex, Chain, SimplexHasher> image_pivots;
+      std::unordered_map<Simplex, Chain, SimplexHasher> kernel_pivots;
+      std::unordered_map<Simplex, Chain, SimplexHasher> cokernel_pivots;
+      vector<int> betti(max_dim + 1);
+      vector< std::unordered_map<Simplex, Chain, SimplexHasher> > 
+          homology_pivots(max_dim + 1);
 
     vector<Simplex> nondegenerate_sxs;
 
@@ -334,7 +336,8 @@ public:
     nondegenerate_subsimplices(max_dim,
                                back_inserter(nondegenerate_sxs));
     clock_t end_t = clock();
-    cout << "nondeg. took " << ((float)(end_t - start_t))/CLOCKS_PER_SEC << "s" << endl;
+    cout << "nondeg. took ";
+    cout << ((float)(end_t - start_t))/CLOCKS_PER_SEC << "s" << endl;
 
     /*cout << "mamximal: ";
     print_simplices(maximal_simplices);
@@ -412,15 +415,15 @@ public:
 
   // provisional, rough measure of size
   int rough_size(void) const {
-    unordered_set<Simplex> sxs;
-    for (auto i = maximal_simplices.begin();
-         i != maximal_simplices.end(); ++i) {
-      vector<Simplex> tmp;
-      i->all_subsimplices(3, back_inserter(tmp));
-      for_each(tmp.begin(), tmp.end(), 
-               [&](Simplex s) { if (!is_collapsed(s)) sxs.insert(s); });
-    }
-    return numeric_cast<int>(sxs.size());
+      unordered_set<Simplex> sxs;
+      for (auto i = maximal_simplices.begin();
+              i != maximal_simplices.end(); ++i) {
+          vector<Simplex> tmp;
+          i->all_subsimplices(3, back_inserter(tmp));
+          for_each(tmp.begin(), tmp.end(),
+                  [&](Simplex s) { if (!is_collapsed(s)) sxs.insert(s); });
+      }
+      return numeric_cast<int>(sxs.size());
   }
 
   /*int uncollapsed_size(void) const {
@@ -496,9 +499,9 @@ class FilteredSimplicialSet {
     assert(dim <= max_dim);
     assert(simplicial_sets.size() > 0);
 
-    map<Simplex, int> birth_times;
+    std::unordered_map<Simplex, int, SimplexHasher> birth_times;
     vector<Chain> image;
-    map<Simplex, Chain> pivots;
+    std::unordered_map<Simplex, Chain, SimplexHasher> pivots;
 
     // compute basis for first space
     for (auto c = simplicial_sets[0]->homology_basis_begin(dim);
@@ -520,7 +523,7 @@ class FilteredSimplicialSet {
       auto& f = induced_maps[i - 1];
 
       pivots.clear();
-      map<Simplex, int> new_times;
+      std::unordered_map<Simplex, int, SimplexHasher> new_times;
       vector<Chain> new_image;
 
       for (auto ch = image.begin(); ch != image.end(); ++ch) {
@@ -620,7 +623,7 @@ class FilteredSimplicialSet {
              kv != induced_maps[i][d].end(); ++kv) {
           Chain c1 = kv->first;
           Chain c2 = kv->second;
-          cout << "  " << c1 << " -> " << 
+          cout << "  " << c1 << " -> " <<
             c2 << endl;
         }
       }
