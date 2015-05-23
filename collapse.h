@@ -35,6 +35,22 @@ collapsed_filtered_cx(FiniteMetricSpace& fms,
   return fss;
 }
 
+class TrivialCollapseStrategy {
+public:
+  SimplicialSetPtr collapse_fully(CliqueGraphPtr cgp) {
+    vector<Simplex> empty;
+    vector<Simplex> vertices;
+    vertices.reserve(cgp->n_vertices());
+    cgp->get_vertices(back_inserter(vertices));
+    return make_shared<SimplicialSet>(vertices, empty);
+  }
+
+  SimplicialSetPtr collapse_partial(CliqueGraphPtr cgp,
+                                    SimplicialSetPtr previous) {
+    return collapse_fully(cgp);
+  }
+};
+
 class NaiveCollapseStrategy {
 protected:
   template <typename Collection>
