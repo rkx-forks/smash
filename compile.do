@@ -4,9 +4,10 @@ if [ -e "/usr/bin/g++-4.9" ]; then
     STD=c++14
 elif [ -e "/usr/bin/g++-4.6" ]; then
     CC=g++-4.6
-    STD=c++1y
+    STD=c++0x
 fi
-CFLAGS="-O3 -march=native --std=$STD -Wall -Werror -Wno-deprecated -D_GNU_SOURCE -lboost_program_options"
+DEBUG_FLAGS="-g"
+CFLAGS="-O1 -march=native --std=$STD -Wall -Werror -Wno-deprecated -D_GNU_SOURCE -lboost_program_options"
 
-echo "$CC $CFLAGS $INC \$@" > $3
+echo "$CC $DEBUG_FLAGS $CFLAGS $INC \$@" > $3
 chmod +x $3
