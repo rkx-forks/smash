@@ -17,35 +17,29 @@ bool Chain::operator!=(Chain const & other) {
 }
 
 Chain Chain::operator+(Chain const & other) const {
-    vector<Simplex> diff;
-    set_symmetric_difference(begin(), end(),
-                             other.begin(), other.end(),
-                             back_inserter(diff),
-                             simplex_order);
-
-    return Chain(diff.begin(),diff.end());
+    return *this - other;
 }
 
 Chain Chain::operator-(Chain const & other) const {
-    vector<Simplex> diff;
-    set_symmetric_difference(begin(),end(),
-                             other.begin(),other.end(),
-                             back_inserter(diff),
+    /* This method gets called a LOT!  We should avoid temporaries
+     * and so forth.  Just construct the new chain, suggest a size
+     * for its simplex vector, and call symmetric_difference.  Note that
+     * the result will be sorted, so we're good on that.  RVO should 
+     * eliminate any more bad copies...
+     */
+    Chain result;
+    result.simplices.reserve(simplices.size() + other.simplices.size());
+
+    set_symmetric_difference(begin(), end(),
+                             other.begin(), other.end(),
+                             back_inserter(result.simplices),
                              simplex_order);
-    return Chain(diff.begin(),diff.end());
+    return result;
 }
 
 bool Chain::operator<(const Chain& other) const {
   return *simplices.begin() < *other.simplices.begin();
 }
-
-/*vector<Simplex>::const_iterator Chain::begin() const {
-    return simplices.begin();
-}
-
-vector<Simplex>::const_iterator Chain::end() const {
-    return simplices.end();
-}*/
 
 // Insert a Simplex to the chain.
 // Maintain descending order of simplices.
