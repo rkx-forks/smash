@@ -30,7 +30,7 @@ bool Simplex::operator==(const Simplex &other) const {
 
 std::ostream &operator<<(std::ostream &os, const Simplex& s) {
   os << "Simplex: ";
-  for (auto i = s.vertices->begin(); i != s.vertices->end(); ++i) {
+  for (auto i = s.begin(); i != s.end(); ++i) {
     os << *i << " ";
   }
   return os;
@@ -38,7 +38,7 @@ std::ostream &operator<<(std::ostream &os, const Simplex& s) {
 
 void print_simplices(const vector<Simplex>& sxs) {
   for (auto i = sxs.begin(); i != sxs.end(); ++i) {
-    cout  << *i << endl;
+    cout << *i << endl;
   }
 }
 

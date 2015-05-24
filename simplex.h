@@ -56,21 +56,21 @@ class Simplex {
   int dimension() const { return vertices->size() - 1; }
 
   bool has_vertex(vertex_t v) const {
-    return binary_search(vertices->begin(), vertices->end(), v);
+    return binary_search(begin(), end(), v);
   }
 
   /*  this is subsimplex of other
    */
   bool is_subsimplex(const Simplex& other) const {
-    return includes(other.vertices->begin(), other.vertices->end(),
-                    vertices->begin(), vertices->end());
+    return includes(other.begin(), other.end(),
+                    begin(), end());
   }
 
   bool has_intersection(const Simplex& other) const {
-    vertex_iterator_t i = vertices->begin(),
-      j = other.vertices->begin(),
-      i_end = vertices->end(),
-      j_end = other.vertices->end();
+    vertex_iterator_t i = begin(),
+      j = other.begin(),
+      i_end = end(),
+      j_end = other.end();
 
     while (i != i_end && j != j_end) {
       if (*i < *j) ++i;
@@ -85,7 +85,7 @@ class Simplex {
   template <typename Function>
   void each_subsimplex(size_t dim, Function f) const {
     assert(dim <= static_cast<size_t>(dimension()));
-    vector<vertex_t> verts(vertices->begin(), vertices->end());
+    vector<vertex_t> verts(begin(), end());
     typedef vector<vertex_t>::iterator v_it;
 
     auto begin = verts.begin();
@@ -106,17 +106,15 @@ class Simplex {
 
   bool operator==(const Simplex& other) const {
     return (vertices == other.vertices ||
-            (vertices->size() == other.vertices->size() &&
-             equal(vertices->begin(), vertices->end(),
-                   other.vertices->begin())));
+            *vertices == *other.vertices);
   }
   bool operator!=(Simplex& other) { return !(*this == other); }
   bool operator<(const Simplex& other) const {
     //    if (dimension() < other.dimension())
     //      return true;
-    return lexicographical_compare(vertices->begin(), vertices->end(),
-                                   other.vertices->begin(),
-                                   other.vertices->end());
+    return lexicographical_compare(begin(), end(),
+                                   other.begin(),
+                                   other.end());
   }
   friend std::ostream &operator<<(std::ostream &os, const Simplex& s);
 };
@@ -131,7 +129,7 @@ struct SimplexHasher {
         using std::hash;
         using std::string;
 
-        size_t hash_val = 0;
+        std::size_t hash_val = 0;
         for (auto i = s.begin(); i != s.end(); ++i) {
             hash_val ^= hash<Simplex::vertex_t>()(*i);
         }
