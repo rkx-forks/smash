@@ -93,11 +93,12 @@ protected:
 
     verts.reserve(cgp->n_vertices());
 
-    // New way, doesn't seem to work as well...
-    //cgp->vertices_by_dimension(back_inserter(verts));
+    TIMER("Naive collapse strategy")
+    // New way
+    cgp->maximal_vertices(cgp->n_vertices(), back_inserter(verts));
 
-    // Old way; seems to work better in terms
-    // of creating sx sets w/ fewer sxs...
+    // Old way; seems to work a little worse 
+    /*
     Simplex max_vert = cgp->maximal_vertex();
     cgp->get_vertices(inserter(verts, verts.begin()));
 
@@ -108,6 +109,7 @@ protected:
                 verts.end());
     *(out++) = max_vert;
     collapsed.insert(max_vert);
+    */
     // end old way
 
     for (auto i = verts.begin(); i != verts.end(); ++i) {
@@ -122,6 +124,7 @@ protected:
         *(out++) = *i;
       }
     }
+    ENDTIMER;
   }
 
   SimplicialSetPtr collapse(CliqueGraphPtr cgp, SimplicialSetPtr ss) {
@@ -139,6 +142,12 @@ protected:
     set_difference(all_vertices.begin(), all_vertices.end(),
                    collapsed_vertices.begin(), collapsed_vertices.end(),
                    back_inserter(maximal_vertices));
+
+    // Report some things
+    cout << "Naive strategy: collapsing " << collapsed_vertices.size();
+    cout << " vertices, " << maximal_vertices.size() << " maximal verts.";
+    cout << endl;
+    //
 
     return make_shared<SimplicialSet>(maximal_vertices,
                                       collapsed_vertices);
@@ -277,6 +286,7 @@ protected:
     vector<Simplex> collapsed_vertices;
     vector<Simplex> maximal_vertices;
 
+    TIMER("Partial collapse strategy")
     all_vertices.reserve(cgp->n_vertices());
     cgp->get_vertices(back_inserter(all_vertices));
 
@@ -321,6 +331,7 @@ protected:
                    collapsed_vertices.begin(), collapsed_vertices.end(),
                    back_inserter(maximal_vertices));
 
+    ENDTIMER;
     return make_shared<SimplicialSet>(maximal_vertices,
                                       collapsed_vertices);
 
