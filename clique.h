@@ -130,7 +130,7 @@ protected:
          [&](const Simplex& s1, const Simplex& s2) {
            return s1.dimension() > s2.dimension();
          });
-    assert(n < sxs.size());
+    assert(n <= sxs.size());
     copy(sxs.begin(), sxs.begin() + n, out);
   }
 
