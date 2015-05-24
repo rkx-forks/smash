@@ -56,7 +56,7 @@ protected:
       Simplex s1 = i->first;
       for (; j != vertex_map.end(); ++j) {
         Simplex s2 = j->first;
-        if (s1.has_intersection(s2)) 
+        if (s1.has_intersection(s2))
           add_edge(i->second, j->second, g);
       }
     }
@@ -67,7 +67,7 @@ protected:
   bool is_degenerate() { // check to make sure no empty simplices
     for (auto vi = vertices(g); vi.first != vi.second; ++vi.first) {
       Simplex s = g[*vi.first].simplex;
-      if (s.dimension() < 0) 
+      if (s.dimension() < 0)
         return true;
     }
     return false;
@@ -103,6 +103,23 @@ protected:
       *(out++) = g[*i].simplex;
   }
 
+  template <typename OutputIterator>
+  void vertices_by_dimension(OutputIterator out) {
+    vector<Simplex> sxs;
+    for (auto i = vertex_map.begin(); i != vertex_map.end(); ++i)
+      sxs.push_back(i->first);
+    sort(sxs.begin(), sxs.end(), [](const Simplex& s1, const Simplex& s2) {
+        return s1.dimension() > s2.dimension();
+      });
+    cout << "Sxs by dim: " << endl;
+    for (int i = 0; i < 5; ++i) {
+      cout << sxs[i] << endl;
+    }
+    for (const auto& sx : sxs) {
+      *(out++) = vertex_map[sx];
+    }
+  }
+
   Simplex maximal_vertex(void) {
     int max_dim = -1;
     Simplex max_sx;
@@ -126,7 +143,7 @@ protected:
               [&](pair<const Simplex, vertex_t>& p) {
                 return p.first;
               });
-    sort(sxs.begin(), sxs.end(), 
+    sort(sxs.begin(), sxs.end(),
          [&](const Simplex& s1, const Simplex& s2) {
            return s1.dimension() > s2.dimension();
          });
@@ -158,21 +175,21 @@ protected:
     std::cout << "vertices:" << endl;
     for (auto i = vertex_map.begin(); i != vertex_map.end(); ++i)
       std::cout << i->first << endl;
-    
+
     clique_graph_t::edge_iterator e, e_end;
     for (tie(e, e_end) = edges(g); e != e_end; ++e) {
       std::cout << g[source(*e, g)].simplex << " - "
                 << g[target(*e, g)].simplex << endl;
     }
   }
-  
+
   /*  template <typename Iterator>
   void connected_component_vertices(Iterator out) {
     vector<int> component(num_vertices(g));
     vector<int>::size_type i;
     int num = connected_components(g, &component[0]);
     vector< set<Simplex::vertex_t> > verts(num);
-    
+
     for (i = 0; i < component.size(); ++i) {
       copy(g[i].simplex.begin(), g[i].simplex.end(),
            inserter(verts[component[i]], verts[component[i]].begin()));

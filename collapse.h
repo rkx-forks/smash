@@ -8,7 +8,7 @@
 
 using namespace std;
 
-/* A way of collapsing a simplicial cx, as well as 
+/* A way of collapsing a simplicial cx, as well as
  * collapsing a cx in a filtration in a way compatible
  * with the rest of the collapsed cxs in the filtration
  */
@@ -66,7 +66,7 @@ public:
   }
 };
 
-/* collapse sxs by choosing appropriate nodes in the clique 
+/* collapse sxs by choosing appropriate nodes in the clique
  * graph.  Do no homology calculations.
  */
 class NaiveCollapseStrategy : public CollapseStrategy {
@@ -90,9 +90,17 @@ protected:
     set<Simplex> collapsed;
     vector<Simplex> verts;
     set<Simplex> nbrs;
+
+    verts.reserve(cgp->n_vertices());
+
+    // New way, doesn't seem to work as well...
+    //cgp->vertices_by_dimension(back_inserter(verts));
+
+    // Old way; seems to work better in terms
+    // of creating sx sets w/ fewer sxs...
+    Simplex max_vert = cgp->maximal_vertex();
     cgp->get_vertices(inserter(verts, verts.begin()));
 
-    Simplex max_vert = cgp->maximal_vertex();
     if (max_vert.dimension() == 0)
       return; // no collapsing can be performed
 
@@ -100,6 +108,7 @@ protected:
                 verts.end());
     *(out++) = max_vert;
     collapsed.insert(max_vert);
+    // end old way
 
     for (auto i = verts.begin(); i != verts.end(); ++i) {
       if (i->dimension() == 0) // don't collapse points

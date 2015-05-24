@@ -7,7 +7,7 @@
 #include "boost/cast.hpp"
 
 #include "incremental_vr2.h"
-#include "chain.hpp"
+#include "chain.h"
 #include "simplex.h"
 
 #include <ctime>
@@ -327,7 +327,7 @@ public:
       std::unordered_map<Simplex, Chain, SimplexHasher> kernel_pivots;
       std::unordered_map<Simplex, Chain, SimplexHasher> cokernel_pivots;
       vector<int> betti(max_dim + 1);
-      vector< std::unordered_map<Simplex, Chain, SimplexHasher> > 
+      vector< std::unordered_map<Simplex, Chain, SimplexHasher> >
           homology_pivots(max_dim + 1);
 
     vector<Simplex> nondegenerate_sxs;
