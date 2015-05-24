@@ -7,7 +7,8 @@ elif [ -e "/usr/bin/g++-4.6" ]; then
     STD=c++0x
 fi
 DEBUG_FLAGS="-g"
-CFLAGS="-O1 -march=native --std=$STD -Wall -Werror -Wno-deprecated -D_GNU_SOURCE -lboost_program_options"
+LIBS="-lboost_program_options -lboost_timer"
+CFLAGS="-O1 -march=native --std=$STD -Wall -Werror -Wno-deprecated -D_GNU_SOURCE $LIBS"
 
 echo "$CC $DEBUG_FLAGS $CFLAGS $INC \$@" > $3
 chmod +x $3

@@ -9,8 +9,7 @@
 #include "incremental_vr2.h"
 #include "chain.h"
 #include "simplex.h"
-
-#include <ctime>
+#include "mytimer.h"
 
 //using namespace boost;
 using namespace std;
@@ -144,7 +143,6 @@ public:
         c.add_simplex(Simplex(vertex_representative(v2)));
       }
     } else { // dimension > 1
-      vector<Simplex> subsxs;
       s.each_subsimplex(s.dimension() - 1,
                         [&](const Simplex& ssx) {
                           if (!is_collapsed(ssx))
@@ -332,12 +330,10 @@ public:
 
     vector<Simplex> nondegenerate_sxs;
 
-    clock_t start_t = clock();
+    TIMER("nondeg.")
     nondegenerate_subsimplices(max_dim,
                                back_inserter(nondegenerate_sxs));
-    clock_t end_t = clock();
-    cout << "nondeg. took ";
-    cout << ((float)(end_t - start_t))/CLOCKS_PER_SEC << "s" << endl;
+    ENDTIMER;
 
     /*cout << "mamximal: ";
     print_simplices(maximal_simplices);
