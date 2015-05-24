@@ -103,23 +103,6 @@ protected:
       *(out++) = g[*i].simplex;
   }
 
-  template <typename OutputIterator>
-  void vertices_by_dimension(OutputIterator out) {
-    vector<Simplex> sxs;
-    for (auto i = vertex_map.begin(); i != vertex_map.end(); ++i)
-      sxs.push_back(i->first);
-    sort(sxs.begin(), sxs.end(), [](const Simplex& s1, const Simplex& s2) {
-        return s1.dimension() > s2.dimension();
-      });
-    cout << "Sxs by dim: " << endl;
-    for (int i = 0; i < 5; ++i) {
-      cout << sxs[i] << endl;
-    }
-    for (const auto& sx : sxs) {
-      *(out++) = vertex_map[sx];
-    }
-  }
-
   Simplex maximal_vertex(void) {
     int max_dim = -1;
     Simplex max_sx;
