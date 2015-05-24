@@ -14,11 +14,14 @@ int main(int argc, char **argv) {
   bool verbose;
   int k;
   vector<coord_t> epsilons;
+  string collapse_strategy;
 
   po::options_description opts("Allowed options");
   opts.add_options()
     ("help", "produce help message")
     ("verbose,v", po::value<bool>(&verbose)->zero_tokens())
+    ("strategy,s", po::value<string>(&collapse_strategy)
+        ->default_value("naive"))
     ;
 
   po::options_description hidden_opts("Hidden opts");
@@ -45,20 +48,38 @@ int main(int argc, char **argv) {
     return 1;
   }
 
+  unique_ptr<CollapseStrategy> collapse_strategy_p;
+  if (collapse_strategy == "naive" || collapse_strategy == "n") {
+    collapse_strategy_p.reset(new NaiveCollapseStrategy);
+    cout << "Using naive collapse strategy" << endl;
+  } else if (collapse_strategy == "partial" || collapse_strategy == "p") {
+    collapse_strategy_p.reset(new PartialCollapseStrategy(0.25));
+    cout << "Using partial collapse strategy" << endl;
+  } else if (collapse_strategy == "homology" || collapse_strategy == "h") {
+    collapse_strategy_p.reset(new HomologyCollapseVisitorStrategy);
+    cout << "Using homology collapse strategy" << endl;
+  } else if (collapse_strategy == "trivial" || collapse_strategy == "t") {
+    collapse_strategy_p.reset(new TrivialCollapseStrategy);
+    cout << "Using trivial collapse strategy" << endl;
+  } else {
+    cout << "invalid collapse strategy '" << collapse_strategy << "'" << endl;
+    cout << "valid: naive | partial | homology | trivial" << endl;
+    return 1;
+  }
+
   point_list pts;
   read_points(std::cin, pts);
   FiniteMetricSpace fms(pts);
 
   FilteredSimplicialSetPtr fss =
     collapsed_filtered_cx(fms, epsilons, k, NetworkxCliqueFactory(),
-                          //HomologyCollapseVisitorStrategy());
-                          //NaiveCollapseStrategy());
-                          PartialCollapseStrategy(.2));
+                          *collapse_strategy_p);
 
   if (verbose)  {
     fss->compute_p_intervals();
     fss->print_info();
     //fss->print_induced_maps();
-    fss->print_p_intervals();
+    //fss->print_p_intervals();
+    cout << "(Imagine p-intervals printed here)" << endl;
   }
 }

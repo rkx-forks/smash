@@ -8,15 +8,28 @@
 
 using namespace std;
 
-/* epsilons is sorted from smallest to largest
+/* A way of collapsing a simplicial cx, as well as 
+ * collapsing a cx in a filtration in a way compatible
+ * with the rest of the collapsed cxs in the filtration
+ */
+class CollapseStrategy {
+public:
+  virtual SimplicialSetPtr collapse_fully(CliqueGraphPtr cgp) = 0;
+  virtual SimplicialSetPtr collapse_partial(CliqueGraphPtr cgp,
+                                            SimplicialSetPtr previous) = 0;
+};
+
+/* method to construct a collapsed filtered cx given appropriate
+ * data, a clique factory, and collapsing strategy.
+ * epsilons is sorted from smallest to largest
  */
 template <typename CliqueFactory, typename CollapseStrategy>
-FilteredSimplicialSetPtr 
-collapsed_filtered_cx(FiniteMetricSpace& fms, 
-                      vector<coord_t>& epsilons, 
+FilteredSimplicialSetPtr
+collapsed_filtered_cx(FiniteMetricSpace& fms,
+                      vector<coord_t>& epsilons,
                       int k,
                       CliqueFactory clique_factory,
-                      CollapseStrategy collapser) {
+                      CollapseStrategy& collapser) {
   auto fss = make_shared<FilteredSimplicialSet>(k);
   auto max_epsilon = *epsilons.rbegin();
   WeightedNeighborhoodGraph ng(fms, max_epsilon);
@@ -35,7 +48,9 @@ collapsed_filtered_cx(FiniteMetricSpace& fms,
   return fss;
 }
 
-class TrivialCollapseStrategy {
+/* collapse NO simplices
+ */
+class TrivialCollapseStrategy : public CollapseStrategy {
 public:
   SimplicialSetPtr collapse_fully(CliqueGraphPtr cgp) {
     vector<Simplex> empty;
@@ -51,7 +66,10 @@ public:
   }
 };
 
-class NaiveCollapseStrategy {
+/* collapse sxs by choosing appropriate nodes in the clique 
+ * graph.  Do no homology calculations.
+ */
+class NaiveCollapseStrategy : public CollapseStrategy {
 protected:
   template <typename Collection>
   bool zero_or_one_in(Collection& c1, Collection& c2) {
@@ -112,7 +130,7 @@ protected:
     set_difference(all_vertices.begin(), all_vertices.end(),
                    collapsed_vertices.begin(), collapsed_vertices.end(),
                    back_inserter(maximal_vertices));
- 
+
     return make_shared<SimplicialSet>(maximal_vertices,
                                       collapsed_vertices);
   }
@@ -151,10 +169,10 @@ public:
         return;
       if (s.dimension() > 0) {
         *out++ = s;
-        typedef typename graph_traits<Graph>::adjacency_iterator 
+        typedef typename graph_traits<Graph>::adjacency_iterator
           AdjacencyIterator;
         AdjacencyIterator vi, vi_end;
-        for (tie(vi, vi_end) = adjacent_vertices(u, g); 
+        for (tie(vi, vi_end) = adjacent_vertices(u, g);
              vi != vi_end; ++vi) {
           collapsed_nbrs_map[*vi] += 1;
         }
@@ -163,10 +181,10 @@ public:
   }
 };
 
-class HomologyCollapseVisitorStrategy {
+class HomologyCollapseVisitorStrategy : public CollapseStrategy {
 protected:
   template <typename OutputIterator>
-  void get_collapsable_vertices(CliqueGraphPtr cgp, 
+  void get_collapsable_vertices(CliqueGraphPtr cgp,
                                 OutputIterator out,
                                 SimplicialSetPtr ss) {
     DfsCollapseVisitor<CliqueGraph::vertex_t, OutputIterator> v(ss, out);
@@ -230,7 +248,7 @@ public:
  *  look at the top percent of maximal simplices by dimension,
  *  try to collapse those
  */
-class PartialCollapseStrategy {
+class PartialCollapseStrategy : public CollapseStrategy {
 public:
   PartialCollapseStrategy(float percent)
     : percent(percent) {}
@@ -310,9 +328,10 @@ public:
   }
 };
 
-/***************************************/
-
-class HomologyCollapseStrategy {
+/* This is old; walks the clique graph explicitly.  We should
+ * probably do it using the visitor as above.
+ */
+class HomologyCollapseStrategy : public CollapseStrategy {
 protected:
   template <typename Collection>
   bool zero_or_one_in(Collection& c1, Collection& c2) {
