@@ -199,6 +199,11 @@ public:
   }
 };
 
+/* TODO: write new dfs_vistor that visits each node,
+ * collapses it if the combinatorial condition is met (zero or one
+ * collapsed neighbors) and otherwise collapses it if the
+ * homological condition is met.  Use it in the following Strategy.
+ */
 class HomologyCollapseVisitorStrategy : public CollapseStrategy {
 protected:
   template <typename OutputIterator>
