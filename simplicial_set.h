@@ -114,7 +114,7 @@ public:
                                      const Simplex& s,
                                      Iterator out) const {
     if (dimension == 0) {
-      set<Simplex::vertex_t> seen;
+      unordered_set<Simplex::vertex_t> seen;
       for (auto v = s.begin(); v != s.end(); ++v) {
         auto vertex = vertex_representative(*v);
         if (seen.find(vertex) == seen.end()) {
@@ -257,11 +257,13 @@ protected:
     copy(sxs.begin(), sxs.end(), out);
   }
 
+  /*
   template <typename Iterator>
   void old_nondegenerate_subsimplices(int max_dim, Iterator out) const {
     for (int i = 0; i < max_dim + 1; ++i)
       nondegenerate_subsimplices_dim(i, out);
   }
+  */
 
   template <typename Iterator>
   void nondegenerate_subsimplices(int max_dim, Iterator out) const {
