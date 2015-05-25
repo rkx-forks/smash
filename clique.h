@@ -53,9 +53,9 @@ protected:
     for (auto i = vertex_map.begin(); i != vertex_map.end(); ++i) {
       auto j = i;
       j++;
-      Simplex s1 = i->first;
+      auto& s1 = i->first;
       for (; j != vertex_map.end(); ++j) {
-        Simplex s2 = j->first;
+        auto& s2 = j->first;
         if (s1.has_intersection(s2))
           add_edge(i->second, j->second, g);
       }
