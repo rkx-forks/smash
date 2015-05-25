@@ -417,7 +417,7 @@ public:
           vector<Simplex> tmp;
           i->all_subsimplices(3, back_inserter(tmp));
           for_each(tmp.begin(), tmp.end(),
-                  [&](Simplex s) { if (!is_collapsed(s)) sxs.insert(s); });
+                  [&](const Simplex& s) { if (!is_collapsed(s)) sxs.insert(s); });
       }
       return numeric_cast<int>(sxs.size());
   }

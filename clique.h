@@ -66,7 +66,7 @@ protected:
 
   bool is_degenerate() { // check to make sure no empty simplices
     for (auto vi = vertices(g); vi.first != vi.second; ++vi.first) {
-      Simplex s = g[*vi.first].simplex;
+      Simplex& s = g[*vi.first].simplex;
       if (s.dimension() < 0)
         return true;
     }
@@ -136,7 +136,7 @@ protected:
 
   void all_simplices(int max_dimension, set<Simplex>& output) {
     for (auto i = vertex_map.begin(); i != vertex_map.end(); ++i) {
-      Simplex s = (*i).first;
+      auto& s = (*i).first;
       s.all_subsimplices(max_dimension, inserter(output, output.end()));
     }
   }

@@ -97,7 +97,7 @@ protected:
     // New way
     cgp->maximal_vertices(cgp->n_vertices(), back_inserter(verts));
 
-    // Old way; seems to work a little worse 
+    // Old way; seems to work a little worse
     /*
     Simplex max_vert = cgp->maximal_vertex();
     cgp->get_vertices(inserter(verts, verts.begin()));
@@ -382,7 +382,7 @@ protected:
     to_check.push(max_vertex);
 
     while (!to_check.empty()) {
-      Simplex s = to_check.top();
+      Simplex& s = to_check.top();
       to_check.pop();
       visited.insert(s);
 
